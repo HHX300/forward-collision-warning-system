@@ -15,3 +15,24 @@ We provide trained models on CULane, Tusimple, and CurveLanes.
 | Dataset    | Backbone | F1   | Link |
 |------------|----------|-------|------|
 | CULane     | ResNet34 | 76.0  |  [Google](https://drive.google.com/file/d/1AjnvAD3qmqt_dGPveZJsLZ1bOyWv62Yj/view?usp=sharing)/[Baidu](https://pan.baidu.com/s/1PHNpVHboQlmpjM5NXl9IxQ?pwd=jw8f)   |
+
+
+# Tensorrt Deploy
+We also provide a python script to do tensorrt inference on videos.
+
+1. Convert to onnx model
+    ```
+    python deploy/pt2onnx.py --config_path configs/culane_res34.py --model_path weights/culane_res34.pth
+    ```
+    Or you can download the onnx model using the following script: https://github.com/PINTO0309/PINTO_model_zoo/blob/main/324_Ultra-Fast-Lane-Detection-v2/download.sh. And copy `ufldv2_culane_res34_320x1600.onnx` to `weights/ufldv2_culane_res34_320x1600.onnx`
+
+2. Convert to tensorrt model
+
+    Use trtexec to convert engine model
+
+    `trtexec --onnx=weights/culane_res34.onnx --saveEngine=weights/culane_res34.engine`
+
+3. Do inference
+    ```
+    python deploy/trt_infer.py --config_path  configs/culane_res34.py --engine_path weights/culane_res34.engine --video_path example.mp4
+    ```
