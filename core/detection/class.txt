@@ -1,0 +1,10 @@
+pedestrian
+bike
+motor
+car
+tricycle
+bus
+minibus
+truck
+cone
+police
