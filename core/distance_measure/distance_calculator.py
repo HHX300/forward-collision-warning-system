@@ -81,11 +81,11 @@ class SpeedMeasure:
         self.calibrated = calib_succeed
 
     def calibOneVanish(self, xaf, yaf, xbf, ybf, xcf, ycf, xdf, ydf, width, length):
-        # 专利算法，暂不开源
+        # 专利算法，暂不开源（可自行替换其他测距算法）
         return 1
 
     def calibTwoVanish(self, xaf, yaf, xbf, ybf, xcf, ycf, xdf, ydf, width):
-        # 专利算法，暂不开源
+        # 专利算法，暂不开源（可自行替换其他测距算法）
         return 1
 
     def image2realXY(self, XImage, YImage):

@@ -38,7 +38,7 @@ class Config:
             # 系统基本参数
             "SYSTEM": {
                 "APP_NAME": "🚗 智能车道检测与碰撞预警系统",
-                "VERSION": "2.0.0",
+                "VERSION": "3.0.0",
                 "DEBUG_MODE": False,
                 "LOG_LEVEL": "INFO",
                 "ENABLE_EMOJI": True,  # 启用emoji图标
