@@ -80,3 +80,4 @@ python main.py
 
 #### 📌 演示demo
 
+![演示GIF](demo/demo1.gif)
