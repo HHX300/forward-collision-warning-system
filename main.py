@@ -65,13 +65,13 @@ class VideoProcessor(QThread):
         self.is_running = False
         self.video_path = None
 
+        # 车道线检测开关状态
+        self.lane_detection_enabled = True
+
         # 初始化检测器
         # 1.车道线检测
-        engine_path = "core/lane_detection/weights/culane_res34.engine"
-        config_path = "core/lane_detection/configs/culane_res34.py"
-        ori_size = (1600, 320) # 固定好size
-        lane_detector = LaneDetector(engine_path, config_path, ori_size)
-        self.lane_detector = lane_detector
+        self.lane_detector = None  # 延迟初始化
+        self._init_lane_detector()
 
         # 2.车辆检测
         model_path = "models/engine/car_detector.engine"
@@ -112,6 +112,30 @@ class VideoProcessor(QThread):
         # 8.科技感可视化
         self.tech_visual_enabled = False         # 科技感可视化开关
         self.tech_visualizer = TechHUDVisualizer()  # 科技感可视化器
+
+    def _init_lane_detector(self):
+        """
+        初始化车道线检测器
+        """
+        if self.lane_detection_enabled and self.lane_detector is None:
+            try:
+                engine_path = "core/lane_detection/weights/culane_res34.engine"
+                config_path = "core/lane_detection/configs/culane_res34.py"
+                ori_size = (1600, 320)  # 固定好size
+                self.lane_detector = LaneDetector(engine_path, config_path, ori_size)
+            except Exception as e:
+                print(f"车道线检测器初始化失败: {e}")
+                self.lane_detector = None
+
+    def set_lane_detection_enabled(self, enabled):
+        """
+        设置车道线检测开关状态
+        """
+        self.lane_detection_enabled = enabled
+        if enabled:
+            self._init_lane_detector()
+        else:
+            self.lane_detector = None
 
     def set_video_source(self, video_path):
         """
@@ -288,7 +312,7 @@ class VideoProcessor(QThread):
 
         # ✅1.车道线检测
         a = time.time()
-        if gap_detect:
+        if gap_detect and self.lane_detection_enabled and self.lane_detector is not None:
             coords = self.lane_detector.get_lane_coordinates(result_frame)
             # 绘制车道线
             result_frame, left_lane, right_lane = postprocess_coords_with_draw(result_frame, coords)
@@ -312,9 +336,13 @@ class VideoProcessor(QThread):
             else:
                 lane_polygon = None
         else:
-            # 使用缓存的检测结果
-            result_frame = self.last_detect_lane_frame
-            lane_polygon = self.last_lane_polygon
+            # 使用缓存的检测结果或原始帧（当车道线检测关闭时）
+            if self.lane_detection_enabled and hasattr(self, 'last_detect_lane_frame') and self.last_detect_lane_frame is not None:
+                result_frame = self.last_detect_lane_frame
+                lane_polygon = self.last_lane_polygon
+            else:
+                result_frame = frame.copy()
+                lane_polygon = None
 
         b = time.time()
         # print(f'检测车道耗时：{(b - a):.2f}s')
@@ -363,7 +391,7 @@ class VideoProcessor(QThread):
                 point_center = (x_center, y_bottom)
 
                 # a.先计算两点之间的距离
-                _, y_distance_ab = self.distance_calculator.cal_distance_a2b((x1,y2), (x2,y2))
+                _, y_distance_ab = self.distance_calculator.cal_distance_a2b((x1, y2), (x2, y2))
 
                 # 一般来说，车宽大约在 1.6 米到 1.85 米 之间
                 # 1.直接通过y_distance_ab，来排除误差较大的数据
@@ -682,7 +710,10 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        self.lane_detection_enabled = True  # 车道线检测开关状态
         self.video_processor = VideoProcessor()
+        # 同步车道线检测状态到VideoProcessor
+        self.video_processor.set_lane_detection_enabled(self.lane_detection_enabled)
         self.current_video_path = None
 
         # 优化的UI更新机制
@@ -771,9 +802,10 @@ class MainWindow(QMainWindow):
         control_layout.setSpacing(10)
 
         # 创建现代化按钮
-        self.open_file_btn = QPushButton("📁 选择视频文件")
-        self.open_camera_btn = QPushButton("📷 打开摄像头")
-        self.color_picker_btn = QPushButton("🎨 自定义主题颜色")
+        self.open_file_btn = QPushButton("📁 视频文件")
+        self.open_camera_btn = QPushButton("📷 摄像头")
+        self.color_picker_btn = QPushButton("🎨 主题")
+        self.lane_detection_btn = QPushButton("🛣️ 车道线检测: 开启")
         self.start_btn = QPushButton("▶️ 开始检测")
         self.stop_btn = QPushButton("⏹️ 停止检测")
 
@@ -781,6 +813,7 @@ class MainWindow(QMainWindow):
         self.open_file_btn.setObjectName("primaryButton")
         self.open_camera_btn.setObjectName("primaryButton")
         self.color_picker_btn.setObjectName("primaryButton")
+        self.lane_detection_btn.setObjectName("successButton")
         self.start_btn.setObjectName("successButton")
         self.stop_btn.setObjectName("dangerButton")
 
@@ -790,6 +823,7 @@ class MainWindow(QMainWindow):
         control_layout.addWidget(self.open_file_btn)
         control_layout.addWidget(self.open_camera_btn)
         control_layout.addWidget(self.color_picker_btn)
+        control_layout.addWidget(self.lane_detection_btn)
         control_layout.addStretch()
         control_layout.addWidget(self.start_btn)
         control_layout.addWidget(self.stop_btn)
@@ -1810,11 +1844,37 @@ class MainWindow(QMainWindow):
         if hasattr(self, "color_picker_btn"):
             self.color_picker_btn.clicked.connect(self.choose_custom_color)
 
+        # 车道线检测开关按钮信号
+        if hasattr(self, "lane_detection_btn"):
+            self.lane_detection_btn.clicked.connect(self.toggle_lane_detection)
+
     def choose_custom_color(self):
         """弹出颜色选择器并应用自定义主题主色（覆盖层方式，不破坏现有主题）"""
         color = QColorDialog.getColor(parent=self, title="选择主题主色")
         if color.isValid():
-            self.apply_custom_theme(color.name())
+            self.apply_custom_theme_first_version(color.name())
+
+    def toggle_lane_detection(self):
+        """
+        切换车道线检测开关
+        """
+        self.lane_detection_enabled = not self.lane_detection_enabled
+
+        if self.lane_detection_enabled:
+            self.lane_detection_btn.setText("🛣️ 车道线检测: 开启")
+            self.lane_detection_btn.setObjectName("successButton")
+            self.add_log("✅ 车道线检测已开启")
+        else:
+            self.lane_detection_btn.setText("🛣️ 车道线检测: 关闭")
+            self.lane_detection_btn.setObjectName("dangerButton")
+            self.add_log("❌ 车道线检测已关闭")
+
+        # 重新应用样式
+        self.lane_detection_btn.style().unpolish(self.lane_detection_btn)
+        self.lane_detection_btn.style().polish(self.lane_detection_btn)
+
+        # 更新VideoProcessor的车道线检测状态
+        self.video_processor.set_lane_detection_enabled(self.lane_detection_enabled)
 
     def apply_custom_theme(self, primary_hex: str):
         """
@@ -2155,6 +2215,9 @@ class MainWindow(QMainWindow):
             self.stop_btn.setEnabled(True)
             self.open_file_btn.setEnabled(False)
             self.open_camera_btn.setEnabled(False)
+            # 禁用车道线检测开关按钮
+            if hasattr(self, 'lane_detection_btn'):
+                self.lane_detection_btn.setEnabled(False)
 
             # 启动UI显示定时器
             self.display_timer.start(self.display_interval)
@@ -2180,6 +2243,9 @@ class MainWindow(QMainWindow):
         self.stop_btn.setEnabled(False)
         self.open_file_btn.setEnabled(True)
         self.open_camera_btn.setEnabled(True)
+        # 重新启用车道线检测开关按钮
+        if hasattr(self, 'lane_detection_btn'):
+            self.lane_detection_btn.setEnabled(True)
 
         # 重置显示状态
         self.pending_frame_update = False
