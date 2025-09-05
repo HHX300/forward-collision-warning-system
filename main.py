@@ -105,7 +105,7 @@ class VideoProcessor(QThread):
 
         # 7.线程优化和帧缓冲
         self.setPriority(QThread.HighPriority)  # 设置高优先级
-        self.frame_buffer = deque(maxlen=100)      # 帧缓冲队列，最多保存10帧
+        self.frame_buffer = deque(maxlen=100)      # 帧缓冲队列，最多保存100帧
         self.buffer_mutex = QMutex()             # 缓冲区互斥锁
         self.current_frame = None                # 当前显示帧
         
