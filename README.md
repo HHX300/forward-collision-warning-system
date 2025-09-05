@@ -69,7 +69,7 @@ conda activate fcw
 - **安装其他相应依赖**
 
   ```bash
-  pip install -r requirements.txt
+  pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
   
   ```
 
