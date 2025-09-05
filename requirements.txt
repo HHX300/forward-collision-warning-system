@@ -12,6 +12,6 @@ PyQt5_sip==12.17.0
 setuptools==78.1.1
 Shapely==2.1.1
 sympy==1.13.1
-tensorrt==10.8.0.43
+tensorrt==10.8.0.43 # 需要安装你本地电脑对应的的TensorRT版本
 tqdm==4.67.1
 ultralytics==8.3.170
