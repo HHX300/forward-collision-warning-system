@@ -30,6 +30,9 @@
 
 ```bash
 git clone https://github.com/HHX300/forward-collision-warning-system.git
+# 若 git clone 项目速度太慢, GitHub 提供直接下载 zip：
+https://github.com/HHX300/forward-collision-warning-system/releases/tag/v1.0.0
+#下载解压即可，但不能直接用 git 管理。
 cd forward-collision-warning-system
 ```
 
