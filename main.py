@@ -124,8 +124,8 @@ class VideoProcessor(QThread):
                 ori_size = (1600, 320)  # 固定好size
                 self.lane_detector = LaneDetector(engine_path, config_path, ori_size)
             except Exception as e:
-                print(f"车道线检测器初始化失败: {e}")
-                print(f"需要进行车道线检测器的环境配置和模型下载，可以选择torch推理，当运行的时候关闭车道线检测，即可正常运行！")
+                print(f"车道线检测器初始化失败，错误为: {e}")
+                print(f"需要进行车道线检测器的环境配置和模型下载，可以选择torch推理，当运行的时候，需要关闭车道线检测，即可正常运行！\n")
                 self.lane_detector = None
 
     def set_lane_detection_enabled(self, enabled):
