@@ -2,23 +2,23 @@
 
 # 前车碰撞预警系统
 
-该预警系统结合了 UFLDv2 车道线检测、YOLO 目标检测以及单目距离估计算法，并配备可视化界面。系统支持 PyTorch 与 TensorRT 推理加速，并采用多线程设计，从而实现了实时性与高精度的性能表现。
+该系统结合了 UFLD-v2 车道线检测、 YOLO 目标检测、 单/双目测距算法（包括标定、测量、估算、矫正算法），并配备可视化界面。系统支持 Torch 与 TensorRT 推理加速，系统 QT 界面采用多线程、队列存储设计，从而实现了实时性与高精度的性能表现。
 
 
 
 ## 一. 软件架构
 
-#### 📌本系统采用模块化设计，主要包含以下核心模块：
+#### 本系统采用模块化设计，主要包含以下核心模块：
 
 - **深度学习框架：** PyTorch + TensorRT（推理加速）
 
-- **计算机视觉：** OpenCV + PIL
+- **计算机视觉：** OpenCV + PIL + Supervision
 
-- **车道线检测：** Ultra-Fast-Lane-Detection-v2
+- **车道线检测：** [Ultra-Fast-Lane-Detection-v2](https://github.com/HHX300/Ultra-Fast-Lane-Detection-v2)
 
-- **目标检测：** YOLOv5/YOLOv8/YOLOv11-seg
+- **目标检测：** YOLOv5/YOLOv7 v8/YOLOv11-seg
 
-- **界面开发：** PyQT  + 自定义科技感组件
+- **界面开发：** PyQT  + OpenCV（自定义科技感组件）
 
 - **配置管理：** JSON + Python类封装
 
@@ -26,26 +26,26 @@
 
 ## 二. 安装教程
 
-#### 📌 git项目
+#### 1. git项目
 
 ```bash
 git clone https://github.com/HHX300/forward-collision-warning-system.git
 cd forward-collision-warning-system
 ```
 
-#### 📌 创建虚拟环境
+#### 2. 创建虚拟环境
 
 ```bash
 conda create -n fcw python=3.10
 ```
 
-#### 📌 激活环境
+#### 3. 激活环境
 
 ```bash
 conda activate fcw
 ```
 
-#### 📌 安装依赖
+#### 4. 安装依赖
 
 - **安装pytorch依赖**
 
@@ -72,7 +72,7 @@ conda activate fcw
 
  ## 三. 使用说明
 
-#### 📌 运行程序
+####  运行程序
 
 ```bash
 python main.py

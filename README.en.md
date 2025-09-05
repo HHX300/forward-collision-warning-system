@@ -6,7 +6,7 @@ This project proposes a forward collision warning (FCW) system that integrates U
 
 ## I. Software Architecture
 
-#### 📌 The system adopts a modular design, mainly consisting of the following core modules:
+####  The system adopts a modular design, mainly consisting of the following core modules:
 
 - **Deep Learning Framework:** PyTorch + TensorRT (for inference acceleration)
 - **Computer Vision:** OpenCV + PIL
@@ -19,26 +19,26 @@ This project proposes a forward collision warning (FCW) system that integrates U
 
 ## II. Installation Guide
 
-#### 📌 Clone the repository
+####  Clone the repository
 
 ```
 git clone https://github.com/HHX300/forward-collision-warning-system.git
 cd forward-collision-warning-system
 ```
 
-#### 📌 Create a virtual environment
+####  Create a virtual environment
 
 ```
 conda create -n fcw python=3.10
 ```
 
-#### 📌 Activate the environment
+####  Activate the environment
 
 ```
 conda activate fcw
 ```
 
-#### 📌 Install dependencies
+####  Install dependencies
 
 - **Install PyTorch dependencies**
 
@@ -65,7 +65,7 @@ conda activate fcw
 
 ## III. Usage Instructions
 
-#### 📌 Run the program
+####  Run the program
 
 ```
 python main.py
