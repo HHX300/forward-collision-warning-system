@@ -158,6 +158,7 @@ class VideoProcessor(QThread):
             else:
                 print(f"摄像头 {video_path} 不存在或无法打开")
             cap.release()
+            return 0
 
         # 如果是视频文件，获取第一帧用于预览
         if isinstance(video_path, str) and os.path.exists(video_path):
