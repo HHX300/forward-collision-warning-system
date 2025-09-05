@@ -146,8 +146,18 @@ class VideoProcessor(QThread):
         """
         # 如果是摄像头，直接写入self
         if isinstance(video_path, int):
-            self.video_path = video_path
-            print("成功打开摄像头")
+            cap = cv2.VideoCapture(video_path)
+            if cap.isOpened():
+                ret, frame = cap.read()
+                if ret and frame is not None:
+                    self.video_path = video_path
+                    print(f"成功打开摄像头 {video_path}，尺寸: {frame.shape}")
+                    self.first_frame_ready.emit(frame)
+                else:
+                    print(f"摄像头 {video_path} 无法读取画面")
+            else:
+                print(f"摄像头 {video_path} 不存在或无法打开")
+            cap.release()
 
         # 如果是视频文件，获取第一帧用于预览
         if isinstance(video_path, str) and os.path.exists(video_path):
