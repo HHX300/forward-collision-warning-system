@@ -74,9 +74,9 @@ class VideoProcessor(QThread):
         self._init_lane_detector()
 
         # 2.车辆检测
-        model_path = "models/engine/car_detector.engine"
-        # model_path = "models/yolov5/car_detector.pt"
-        # model_path = "models/yolo11-seg/yolo11s-seg.pt"
+        model_path = "models/engine/car_detector.engine" # TensorRT推理
+        # model_path = "models/yolov5/car_detector.pt" # pytorch推理（没有TensorRT框架的时候，默认推理模式）
+        # model_path = "models/yolo11-seg/yolo11s-seg.pt" # 分割模型推理
         self.vehicle_detector = VehicleDetector(model_path)
 
         # 3.距离检测
