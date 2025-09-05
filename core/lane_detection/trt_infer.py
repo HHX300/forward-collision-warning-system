@@ -15,7 +15,7 @@ import threading
 import queue
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
-from utils.config import Config
+from utilss.config import Config
 from lane_region_draw import postprocess_coords_with_draw
 
 

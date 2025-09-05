@@ -1,7 +1,7 @@
 import os, argparse
 # from data.dali_data import TrainCollect
-from utils.dist_utils import get_rank, get_world_size, is_main_process, dist_print, DistSummaryWriter
-from utils.config import Config
+from utilss.dist_utils import get_rank, get_world_size, is_main_process, dist_print, DistSummaryWriter
+from utilss.config import Config
 import torch
 import time
 

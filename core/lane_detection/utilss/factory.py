@@ -1,6 +1,6 @@
-from utils.loss import SoftmaxFocalLoss, ParsingRelationLoss, ParsingRelationDis, MeanLoss, TokenSegLoss, VarLoss, EMDLoss, RegLoss
-from utils.metrics import MultiLabelAcc, AccTopk, Metric_mIoU, Mae
-from utils.dist_utils import DistSummaryWriter
+from utilss.loss import SoftmaxFocalLoss, ParsingRelationLoss, ParsingRelationDis, MeanLoss, TokenSegLoss, VarLoss, EMDLoss, RegLoss
+from utilss.metrics import MultiLabelAcc, AccTopk, Metric_mIoU, Mae
+from utilss.dist_utils import DistSummaryWriter
 
 import torch
 

@@ -74,8 +74,8 @@ class VideoProcessor(QThread):
         self._init_lane_detector()
 
         # 2.车辆检测
-        model_path = "models/engine/car_detector.engine" # TensorRT推理
-        # model_path = "models/yolov5/car_detector.pt" # pytorch推理（没有TensorRT框架的时候，默认推理模式）
+        # model_path = "models/engine/car_detector.engine" # TensorRT推理
+        model_path = "models/yolov5/car_detector.pt" # pytorch推理（没有TensorRT框架的时候，默认推理模式）
         # model_path = "models/yolo11-seg/yolo11s-seg.pt" # 分割模型推理
         self.vehicle_detector = VehicleDetector(model_path)
 
@@ -125,6 +125,7 @@ class VideoProcessor(QThread):
                 self.lane_detector = LaneDetector(engine_path, config_path, ori_size)
             except Exception as e:
                 print(f"车道线检测器初始化失败: {e}")
+                print(f"需要进行车道线检测器的环境配置和模型下载，可以选择torch推理，当运行的时候关闭车道线检测，即可正常运行！")
                 self.lane_detector = None
 
     def set_lane_detection_enabled(self, enabled):
